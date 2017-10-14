@@ -25,7 +25,6 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
 
     private Music music;
     private int current = -1;
-    private int whereClick = -1;
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -50,13 +49,17 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void init() {
-        IntentSetting();
+        setContentView(R.layout.activity_player);
+
+        intentSetting();
         load();
         initView();
-        checkPlayer();
+        initViewPager();
+        initPlayer();
     }
 
-    private void IntentSetting() {
+    // Service Intent 설정
+    private void intentSetting() {
         serviceIntent = new Intent(this, PlayerService.class);
     }
 
@@ -65,13 +68,10 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         Intent intent = getIntent();
         if (intent != null) {
             current = intent.getIntExtra(Const.KEY_POSITION, 0);
-            whereClick = intent.getIntExtra(Const.KEY_CLICK, 0);
         }
     }
 
     private void initView() {
-        setContentView(R.layout.activity_player);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         textTitle = toolbar.findViewById(R.id.textTitle);
@@ -100,103 +100,77 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         imgNext.setOnClickListener(this);
     }
 
-    private void checkPlayer() {
-        Log.e("PlayerActivity","checkPlayer() 호출");
-        Log.e("PlayerActivity","whereClick : " + whereClick);
-        Log.e("PlayerActivity","current : " + current);
-        // Play 중에 APP 을 실행하면 Button 과 View 를 변경해 줘야 한다.
-        // current 설정 및 Button 설정
-        // viewPager.setCurrentItem(current);
-
-        if (whereClick == 0) {
-            // LIST 에서 클릭했을 경우
-            initViewPager();
-        } else {
-            // APP 을 클릭했을 경우
-            // 그 페이지로 시작하고
-            initViewPager(current);
-            // 버튼 만 바꿔주면 된다.
-            if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
-                // 시작 중이라면
-                togglePlayButton(Const.STAT_PLAY);
-            } else if (Player.getInstance().getStatus() == Const.STAT_PAUSE) {
-                // 일시정지 중이라면
-                seekBar.setProgress(Player.getInstance().getCurrentPosition());
-                textCurrentTime.setText(milliToSec(Player.getInstance().getCurrentPosition()));
-                togglePlayButton(Const.STAT_PAUSE);
-            }
-        }
-    }
-
-
     private void initViewPager() {
-        Log.e("PlayerActivity" , "initViewPager() 호출");
         PlayerPageAdapter playerPageAdapter = new PlayerPageAdapter(this, music.getItemList());
         viewPager.setAdapter(playerPageAdapter);
-        // 첫 실행에서는 절대로 이뤄지지 않음;;
-        // 0 page 일때는 실행이 안됨...
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+    }
 
-            @Override
-            public void onPageSelected(int position) {
-                current = position;
-                initPlayerView();
-                playerSet();
-                if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
-                    playerStart();
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        if(current > 0) {
+    private void initPlayer(){
+        viewPager.addOnPageChangeListener(onPageChangeListener);
+        if(current > 0){
+            // 0번째 current 를 실행한 경우
             Player.getInstance().setStatus(Const.STAT_PLAY);
             viewPager.setCurrentItem(current);
         }else{
+            // 0번째 current 를 실행한 경우
             initPlayerView();
             playerSet();
             playerStart();
         }
     }
 
-    private void initViewPager(int number){
-        Log.e("PlayerActivity" , "initViewPager(int number) 호출");
-        PlayerPageAdapter playerPageAdapter = new PlayerPageAdapter(this, music.getItemList());
-        viewPager.setAdapter(playerPageAdapter);
-        if(number > 0 ){
-            viewPager.setCurrentItem(number);
-        }
-        // 첫 실행에서는 절대로 이뤄지지 않음;;
-        // 0 page 일때는 실행이 안됨...
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+    private void playerCheck() {
+       /* Log.e("PlayerActivity", "checkPlayer() 호출");
+        Log.e("PlayerActivity", "current : " + current);
+        int playerCurrent = Player.getInstance().getCurrent();
+        Log.e("PlayerActivity", "playerCurrent :" + playerCurrent);
 
-            @Override
-            public void onPageSelected(int position) {
-                current = position;
+        if(playerCurrent != -1){
+            if(current != playerCurrent){
+                Log.e("변환", "변환");
+                viewPager.clearOnPageChangeListeners();
                 initPlayerView();
-                playerSet();
-                if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
-                    playerStart();
-                }
+                viewPager.setCurrentItem(playerCurrent);
+                viewPager.addOnPageChangeListener(onPageChangeListener);
             }
+        }*/
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        initPlayerView();
+        /*
+        // 목록 을 클릭했을 경우
+        // 그 페이지로 시작하고
+        // 버튼 만 바꿔주면 된다.
+        if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
+            // 시작 중이라면
+            togglePlayButton(Const.STAT_PLAY);
+        } else if (Player.getInstance().getStatus() == Const.STAT_PAUSE) {
+            // 일시정지 중이라면
+            seekBar.setProgress(Player.getInstance().getCurrentPosition());
+            textCurrentTime.setText(milliToSec(Player.getInstance().getCurrentPosition()));
+            togglePlayButton(Const.STAT_PAUSE);
+        }
+        */
     }
+
+    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            current = position;
+            initPlayerView();
+            playerSet();
+            if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
+                playerStart();
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 
     /**
      * Player 에 관련된 View Setting
@@ -213,19 +187,6 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         textArtist.setText(item.artist);
     }
 
-    /**
-     * 1110101 -> 04:00 으로 변환하는 메소드
-     *
-     * @param milli
-     * @return
-     */
-    private String milliToSec(int milli) {
-        int sec = milli / 1000;
-        int min = sec / 60;
-        sec = sec % 60;
-
-        return java.lang.String.format("%02d", min) + ":" + java.lang.String.format("%02d", sec);
-    }
 
     @Override
     public void onClick(View view) {
@@ -272,9 +233,9 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
-        // viewPager 의 Listener 도 걸려있기 때문에 viewPager.setCurrentItem() 메소드를 사용할 수 없다.
-
+        Log.e("PlayerActivity", "onResume() 호출");
         Player.getInstance().addListener(this);
+        playerCheck();
     }
 
     @Override
@@ -337,5 +298,18 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         viewPager.setCurrentItem(current, true);
     }
 
+    /**
+     * 1110101 -> 04:00 으로 변환하는 메소드
+     *
+     * @param milli
+     * @return
+     */
+    private String milliToSec(int milli) {
+        int sec = milli / 1000;
+        int min = sec / 60;
+        sec = sec % 60;
+
+        return java.lang.String.format("%02d", min) + ":" + java.lang.String.format("%02d", sec);
+    }
 }
 

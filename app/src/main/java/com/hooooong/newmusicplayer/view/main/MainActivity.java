@@ -36,15 +36,18 @@ public class MainActivity extends BaseActivity implements MusicFragment.OnListFr
         initTabLayout();
         initViewPager();
         initListener();
-        checkPlayer();
     }
 
+    /*
+    // 보류
+
+    // App 을 눌렀을 때 PlayerActivity 로 이동할 지 검사하는 메소드
     private void checkPlayer() {
         // Player 가 정지상태만 아니라면 무조건 PlayerActivity 로 이동한다.
         if(Player.getInstance().getStatus() != Const.STAT_STOP){
             openPlayer(Player.getInstance().getCurrent(), 1);
         }
-    }
+    }*/
 
     private void initListener() {
         // TabLayout 을 ViewPager 에 연결
@@ -94,12 +97,11 @@ public class MainActivity extends BaseActivity implements MusicFragment.OnListFr
     }
 
     @Override
-    public void openPlayer(int position, int click) {
+    public void openPlayer(int position) {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         // putExtra 의 String 값은 상수의 이름이기 때문에
         // class 를 만들어서
         intent.putExtra(Const.KEY_POSITION, position);
-        intent.putExtra(Const.KEY_CLICK, click);
         startActivity(intent);
     }
 

@@ -84,7 +84,7 @@ public class MyMusicRecyclerViewAdapter extends RecyclerView.Adapter<MyMusicRecy
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.openPlayer(position, 0);
+                    mListener.openPlayer(position);
                 }
             });
         }
