@@ -2,6 +2,7 @@ package com.hooooong.newmusicplayer.util;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.hooooong.newmusicplayer.data.Const;
 import com.hooooong.newmusicplayer.data.model.Music;
@@ -40,17 +41,20 @@ public class Player {
 
     // 음원 세팅
     public void set(Context context, int current) {
+        Log.e("Player", "set() 호출");
+        this.current = current;
+        this.context = context;
+
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        this.current = current;
-        this.context = context;
 
         mediaPlayer = MediaPlayer.create(context, Music.getInstance().getItemList().get(current).musicUri);
         mediaPlayer.setLooping(loop);
         mediaPlayer.setOnCompletionListener(completionListener);
 
+        Log.e("Player", "current : " + current);
     }
 
     MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
@@ -59,13 +63,11 @@ public class Player {
             // loop check;
             if(current < Music.getInstance().getItemList().size() ){
                 current += 1;
-
-                set(context, current);
-                start();
-
                 for(Listener listener : listenerList){
                     listener.setMusic(current);
                 }
+                set(context, current);
+                start();
             }
         }
     };

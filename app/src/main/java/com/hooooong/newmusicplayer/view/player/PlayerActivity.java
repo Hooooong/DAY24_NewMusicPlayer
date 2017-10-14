@@ -120,11 +120,12 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void playerCheck() {
-       /* Log.e("PlayerActivity", "checkPlayer() 호출");
+        Log.e("PlayerActivity", "playerCheck() 호출");
         Log.e("PlayerActivity", "current : " + current);
         int playerCurrent = Player.getInstance().getCurrent();
         Log.e("PlayerActivity", "playerCurrent :" + playerCurrent);
 
+        /*
         if(playerCurrent != -1){
             if(current != playerCurrent){
                 Log.e("변환", "변환");
@@ -180,13 +181,15 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
 
         seekBar.setMax(item.duration);
         textDuration.setText(milliToSec(item.duration));
+
+        // 초기화
         textCurrentTime.setText("00:00");
+        seekBar.setProgress(0);
 
         // Title, Artist 세팅
         textTitle.setText(item.title);
         textArtist.setText(item.artist);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -256,7 +259,6 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void playerStart() {
-        Log.e("PlayerActivity", "playerStart() 호출");
         serviceIntent.setAction(Const.ACTION_START);
         startService(serviceIntent);
         togglePlayButton(Const.STAT_PLAY);
@@ -295,7 +297,12 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void setMusic(int current) {
-        viewPager.setCurrentItem(current, true);
+        this.current = current;
+
+        viewPager.clearOnPageChangeListeners();
+        initPlayerView();
+        viewPager.setCurrentItem(current);
+        viewPager.addOnPageChangeListener(onPageChangeListener);
     }
 
     /**

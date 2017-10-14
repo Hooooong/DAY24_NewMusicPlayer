@@ -56,6 +56,7 @@ public class PlayerService extends Service {
     @Override
     public void onDestroy() {
         if (player != null) {
+            player.stop();
             player = null;
         }
         super.onDestroy();
