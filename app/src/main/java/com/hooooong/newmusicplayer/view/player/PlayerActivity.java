@@ -125,6 +125,12 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         int playerCurrent = Player.getInstance().getCurrent();
         Log.e("PlayerActivity", "playerCurrent :" + playerCurrent);
 
+        // onResume() 에서만 호출되는 메소드
+        // initPlayer 와 중복이 되지 않고
+        // 목록에서 눌렀을 때 중복이 되지 않도록
+        // 현재 Service 에서 실행하고 있는 current 와 현재 current 가 다를 경우
+        // ViewPager 이동한다.
+
         /*
         if(playerCurrent != -1){
             if(current != playerCurrent){
