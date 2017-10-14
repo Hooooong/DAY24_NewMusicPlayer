@@ -111,7 +111,7 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
             // 0번째 current 를 실행한 경우
             Player.getInstance().setStatus(Const.STAT_PLAY);
             viewPager.setCurrentItem(current);
-        }else{
+        }else {
             // 0번째 current 를 실행한 경우
             initPlayerView();
             playerSet();
@@ -135,21 +135,6 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
                 viewPager.addOnPageChangeListener(onPageChangeListener);
             }
         }*/
-
-        /*
-        // 목록 을 클릭했을 경우
-        // 그 페이지로 시작하고
-        // 버튼 만 바꿔주면 된다.
-        if (Player.getInstance().getStatus() == Const.STAT_PLAY) {
-            // 시작 중이라면
-            togglePlayButton(Const.STAT_PLAY);
-        } else if (Player.getInstance().getStatus() == Const.STAT_PAUSE) {
-            // 일시정지 중이라면
-            seekBar.setProgress(Player.getInstance().getCurrentPosition());
-            textCurrentTime.setText(milliToSec(Player.getInstance().getCurrentPosition()));
-            togglePlayButton(Const.STAT_PAUSE);
-        }
-        */
     }
 
     ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -182,7 +167,7 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         seekBar.setMax(item.duration);
         textDuration.setText(milliToSec(item.duration));
 
-        // 초기화
+        // seekBar, 현재 초 초기화
         textCurrentTime.setText("00:00");
         seekBar.setProgress(0);
 
